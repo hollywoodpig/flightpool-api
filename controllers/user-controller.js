@@ -1,11 +1,11 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
-const User = require('../models/user')(sequelize, DataTypes);
+const { models } = require('../database');
 
 class UserController {
 	async register(req, res) {
 		try {
-			res.json('register');
+			const data = await models.user.findAll();
+
+			res.json(data);
 		} catch (e) {
 			console.error(e);
 		}
