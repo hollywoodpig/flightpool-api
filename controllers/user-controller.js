@@ -19,7 +19,7 @@ class UserController {
 			const { first_name, last_name, phone, document_number, password } =
 				req.body;
 
-			await UserService.register(
+			const user = await UserService.register(
 				first_name,
 				last_name,
 				phone,
@@ -27,7 +27,7 @@ class UserController {
 				password
 			);
 
-			res.status(204);
+			return res.json(user);
 		} catch (e) {
 			return res.status(e.code).json({
 				code: e.code,

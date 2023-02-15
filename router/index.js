@@ -7,19 +7,15 @@ const router = new Router();
 router.post(
 	'/register',
 	[
-		body('first_name')
-			.notEmpty()
-			.isString()
-			.withMessage('Empty first name'),
-		body('last_name').notEmpty().isString().withMessage('Empty last name'),
-		body('phone').notEmpty().isString().withMessage('Empty phone'),
+		body('first_name').notEmpty().withMessage('Empty first name'),
+		body('last_name').notEmpty().withMessage('Empty last name'),
+		body('phone').notEmpty().withMessage('Empty phone'),
 		body('document_number')
 			.notEmpty()
-			.isString()
 			.withMessage('Empty document number')
 			.isLength(10)
 			.withMessage('Must be 10 characters long'),
-		body('password').notEmpty().isString().withMessage('Empty password'),
+		body('password').notEmpty().withMessage('Empty password'),
 	],
 	userController.register
 );
@@ -27,8 +23,8 @@ router.post(
 router.post(
 	'/login',
 	[
-		body('phone').notEmpty().isString().withMessage('Empty phone'),
-		body('password').notEmpty().isString().withMessage('Empty password'),
+		body('phone').notEmpty().withMessage('Empty phone'),
+		body('password').notEmpty().withMessage('Empty password'),
 	],
 	userController.login
 );
