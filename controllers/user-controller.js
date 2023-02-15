@@ -1,19 +1,11 @@
-const { validationResult } = require('express-validator');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { models } = require('../database');
-
-const myValidationResult = validationResult.withDefaults({
-	formatter: (error) => error.msg,
-});
+const validation = require('../helpers/validation');
+const UserService = require('../services/user-service');
 
 class UserController {
 	async register(req, res) {
 		try {
-			// Валидируем входящие данные
-			const validationErrors = myValidationResult(req);
+			const validationErrors = validation(req);
 
-			// Не прошла валидация
 			if (!validationErrors.isEmpty()) {
 				const errors = validationErrors.mapped();
 
@@ -27,49 +19,28 @@ class UserController {
 			const { first_name, last_name, phone, document_number, password } =
 				req.body;
 
-			// Ищем пользователя в базе данных по номеру телефона
-			const candidate = await models.user.findOne({
-				where: { phone },
-			});
-
-			// Не можем зарегистрировать, т.к. пользователь уже существует
-			if (candidate) {
-				return res.status(409).json({
-					code: 409,
-					message: 'User already exists',
-				});
-			}
-
-			// Хешируем пароль
-			const hashPassword = await bcrypt.hash(password, 7);
-			// Генерируем токен
-			const token = jwt.sign(
-				{ first_name, last_name, phone, document_number },
-				process.env.SECRET_KEY
-			);
-
-			// Регистрируем пользователя
-			await models.user.create({
+			await UserService.register(
 				first_name,
 				last_name,
 				phone,
 				document_number,
-				api_token: token,
-				password: hashPassword,
-			});
+				password
+			);
 
 			res.status(204);
 		} catch (e) {
-			console.error(e);
+			return res.status(e.code).json({
+				code: e.code,
+				message: e.message,
+				errors: e.errors ?? {},
+			});
 		}
 	}
 
 	async login(req, res) {
 		try {
-			// Валидируем входящие данные
-			const validationErrors = myValidationResult(req);
+			const validationErrors = validation(req);
 
-			// Не прошла валидация
 			if (!validationErrors.isEmpty()) {
 				const errors = validationErrors.mapped();
 
@@ -82,38 +53,7 @@ class UserController {
 
 			const { phone, password } = req.body;
 
-			// Ищем пользователя в базе данных по номеру телефона
-			const candidate = await models.user.findOne({
-				where: { phone },
-			});
-
-			// Пользователя не существует
-			if (!candidate) {
-				return res.status(401).json({
-					code: 401,
-					message: 'Unathorized',
-					errors: {
-						phone: ['Phone or password incorrect'],
-					},
-				});
-			}
-
-			// Сравниваем пароли
-			const validPassword = bcrypt.compareSync(
-				password,
-				candidate.password
-			);
-
-			// Неверный пароль
-			if (!validPassword) {
-				return res.status(401).json({
-					code: 401,
-					message: 'Unathorized',
-					errors: {
-						phone: ['Phone or password incorrect'],
-					},
-				});
-			}
+			const candidate = await UserService.login(phone, password);
 
 			res.json({
 				data: {
@@ -121,7 +61,11 @@ class UserController {
 				},
 			});
 		} catch (e) {
-			console.error(e);
+			return res.status(e.code).json({
+				code: e.code,
+				message: e.message,
+				errors: e.errors ?? {},
+			});
 		}
 	}
 }
