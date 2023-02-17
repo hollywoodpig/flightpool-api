@@ -1,6 +1,7 @@
 const { Router } = require('express');
-const { body } = require('express-validator');
-const userController = require('../controllers/user-controller');
+const { body, query } = require('express-validator');
+const UserController = require('../controllers/user-controller');
+const AirportController = require('../controllers/airport-controller');
 
 const router = new Router();
 
@@ -22,7 +23,7 @@ router.post(
 			.withMessage('Must be 10 characters long'),
 		body('password').notEmpty().withMessage('Empty password'),
 	],
-	userController.register
+	UserController.register
 );
 
 /**
@@ -36,7 +37,14 @@ router.post(
 		body('phone').notEmpty().withMessage('Empty phone'),
 		body('password').notEmpty().withMessage('Empty password'),
 	],
-	userController.login
+	UserController.login
 );
+
+/**
+ * Get airports list
+ * Method: GET
+ * Data: { query }
+ */
+router.get('/airport', AirportController.index);
 
 module.exports = router;
