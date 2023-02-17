@@ -4,6 +4,11 @@ const userController = require('../controllers/user-controller');
 
 const router = new Router();
 
+/**
+ * Register user
+ * Method: POST
+ * Data: { first_name, last_name, phone, document_number }
+ */
 router.post(
 	'/register',
 	[
@@ -20,6 +25,11 @@ router.post(
 	userController.register
 );
 
+/**
+ * Login user
+ * Method: POST
+ * Data: { phone, password }
+ */
 router.post(
 	'/login',
 	[

@@ -2,30 +2,22 @@ const validation = require('../helpers/validation');
 const UserService = require('../services/user-service');
 
 class UserController {
+	/**
+	 * Register
+	 */
 	async register(req, res) {
 		try {
 			const validationErrors = validation(req);
 
 			if (!validationErrors.isEmpty()) {
-				const errors = validationErrors.mapped();
-
 				return res.status(422).json({
 					code: 422,
 					message: 'Validation error',
-					errors,
+					errors: validationErrors.mapped(),
 				});
 			}
 
-			const { first_name, last_name, phone, document_number, password } =
-				req.body;
-
-			const user = await UserService.register(
-				first_name,
-				last_name,
-				phone,
-				document_number,
-				password
-			);
+			const user = await UserService.register(req.body);
 
 			return res.json(user);
 		} catch (e) {
@@ -37,23 +29,22 @@ class UserController {
 		}
 	}
 
+	/**
+	 * Login
+	 */
 	async login(req, res) {
 		try {
 			const validationErrors = validation(req);
 
 			if (!validationErrors.isEmpty()) {
-				const errors = validationErrors.mapped();
-
 				return res.status(422).json({
 					code: 422,
 					message: 'Validation error',
-					errors,
+					errors: validationErrors.mapped(),
 				});
 			}
 
-			const { phone, password } = req.body;
-
-			const candidate = await UserService.login(phone, password);
+			const candidate = await UserService.login(req.body);
 
 			res.json({
 				data: {

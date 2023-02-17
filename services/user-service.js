@@ -3,7 +3,10 @@ const jwt = require('jsonwebtoken');
 const { models } = require('../database');
 
 class UserService {
-	async register(first_name, last_name, phone, document_number, password) {
+	/**
+	 * Register
+	 */
+	async register({ first_name, last_name, phone, document_number, password }) {
 		const candidate = await models.user.findOne({
 			where: { phone },
 		});
@@ -34,7 +37,10 @@ class UserService {
 		return user;
 	}
 
-	async login(phone, password) {
+	/**
+	 * Login
+	 */
+	async login({ phone, password }) {
 		const candidate = await models.user.findOne({
 			where: { phone },
 		});
