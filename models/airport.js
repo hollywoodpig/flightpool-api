@@ -44,4 +44,30 @@ class airport extends Sequelize.Model {
 			}
 		);
 	}
+
+	async findByQuery(query) {
+		const data = await this.findAll({
+			where: {
+				[Op.or]: [
+					{
+						city: {
+							[Op.like]: `%${query}%`,
+						},
+					},
+					{
+						name: {
+							[Op.like]: `%${query}%`,
+						},
+					},
+					{
+						iata: {
+							[Op.like]: `%${query}%`,
+						},
+					},
+				],
+			},
+		});
+
+		return data;
+	}
 }

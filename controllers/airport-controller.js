@@ -7,7 +7,7 @@ class AirportController {
 	 */
 	async index(req, res) {
 		try {
-			const { query } = req.query;
+			const query = req.query.query ?? '';
 
 			const airports = await models.airport.findAll({
 				where: {
