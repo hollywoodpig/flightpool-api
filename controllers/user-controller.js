@@ -1,62 +1,47 @@
 const validation = require('../helpers/validation');
 const UserService = require('../services/user-service');
+const ApiError = require('../exceptions/api-error');
 
 class UserController {
 	/**
 	 * Register
 	 */
-	async register(req, res) {
+	async register(req, res, next) {
 		try {
 			const validationErrors = validation(req);
 
 			if (!validationErrors.isEmpty()) {
-				return res.status(422).json({
-					code: 422,
-					message: 'Validation error',
-					errors: validationErrors.mapped(),
-				});
+				throw ApiError.Unvalidated(validationErrors.mapped());
 			}
 
 			const user = await UserService.register(req.body);
 
 			return res.json(user);
 		} catch (e) {
-			return res.status(e.code).json({
-				code: e.code,
-				message: e.message,
-				errors: e.errors ?? {},
-			});
+			next(e);
 		}
 	}
 
 	/**
 	 * Login
 	 */
-	async login(req, res) {
+	async login(req, res, next) {
 		try {
 			const validationErrors = validation(req);
 
 			if (!validationErrors.isEmpty()) {
-				return res.status(422).json({
-					code: 422,
-					message: 'Validation error',
-					errors: validationErrors.mapped(),
-				});
+				throw ApiError.Unvalidated(validationErrors.mapped());
 			}
 
 			const candidate = await UserService.login(req.body);
 
-			res.json({
+			return res.json({
 				data: {
 					token: candidate.api_token,
 				},
 			});
 		} catch (e) {
-			return res.status(e.code).json({
-				code: e.code,
-				message: e.message,
-				errors: e.errors ?? {},
-			});
+			next(e);
 		}
 	}
 }

@@ -1,22 +1,25 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { models } = require('../database');
+const ApiError = require('../exceptions/api-error');
 
 class UserService {
 	/**
 	 * Register
 	 */
-	async register({ first_name, last_name, phone, document_number, password }) {
+	async register({
+		first_name,
+		last_name,
+		phone,
+		document_number,
+		password,
+	}) {
 		const candidate = await models.user.findOne({
 			where: { phone },
 		});
 
 		if (candidate) {
-			const error = new Error('User already exists');
-
-			error.code = 409;
-
-			throw error;
+			throw ApiError.BadRequest('User already exists');
 		}
 
 		const hashPassword = await bcrypt.hash(password, 7);
@@ -46,27 +49,13 @@ class UserService {
 		});
 
 		if (!candidate) {
-			const error = new Error('Unathorized');
-
-			error.code = 401;
-			error.errors = {
-				phone: ['Phone or password incorrect'],
-			};
-
-			throw error;
+			throw ApiError.Unathorized();
 		}
 
 		const validPassword = bcrypt.compareSync(password, candidate.password);
 
 		if (!validPassword) {
-			const error = new Error('Unathorized');
-
-			error.code = 401;
-			error.errors = {
-				phone: ['Phone or password incorrect'],
-			};
-
-			throw error;
+			throw ApiError.Unathorized();
 		}
 
 		return candidate;

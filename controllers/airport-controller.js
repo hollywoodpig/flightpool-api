@@ -31,7 +31,7 @@ class AirportController {
 				},
 			});
 
-			res.json({
+			return res.json({
 				data: airports,
 			});
 		} catch {
