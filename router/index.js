@@ -69,20 +69,6 @@ router.get(
 			.withMessage('Empty IATA code')
 			.matches(/^[A-Z]{3}$/)
 			.withMessage('Incorrect IATA code'),
-		query('date1')
-			.notEmpty()
-			.withMessage('Empty date')
-			.matches(/\d{4}-\d{2}-\d{2}/)
-			.withMessage('Incorrect date format, use YYYY-DD-DD'),
-		query('date2')
-			.optional()
-			.matches(/\d{4}-\d{2}-\d{2}/)
-			.withMessage('Incorrect date format, use YYYY-DD-DD'),
-		query('passengers')
-			.notEmpty()
-			.withMessage('A flight without any passengers? Seriously?')
-			.matches(/^[1-8]$/)
-			.withMessage('Enter number from 1 to 8'),
 	],
 	FlightController.index
 );

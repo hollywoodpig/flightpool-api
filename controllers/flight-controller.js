@@ -1,4 +1,3 @@
-const { Op } = require('sequelize');
 const { models } = require('../database');
 const validation = require('../helpers/validation');
 const ApiError = require('../exceptions/api-error');
@@ -14,21 +13,27 @@ class FlightController {
 
 			const flightsTo = await models.flight.findAll({
 				include: {
+					where: { iata: req.query.from },
 					model: models.airport,
 					as: 'from',
-					where: { iata: req.query.from },
+				},
+			});
+
+			const flightsBack = await models.flight.findAll({
+				include: {
+					where: { iata: req.query.to },
+					model: models.airport,
+					as: 'to',
 				},
 			});
 
 			return res.json({
 				data: {
-					flightsTo,
+					flights_to: flightsTo,
+					flight_back: flightsBack,
 				},
 			});
-
-			// return flights with from_id equals id from airport with query.from
 		} catch (e) {
-			console.log(e);
 			next(e);
 		}
 	}
