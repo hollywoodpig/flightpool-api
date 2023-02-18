@@ -1,7 +1,8 @@
 const { Router } = require('express');
-const { body, query } = require('express-validator');
+const { body } = require('express-validator');
 const UserController = require('../controllers/user-controller');
 const AirportController = require('../controllers/airport-controller');
+const authMiddleware = require('../middleware/auth-middleware');
 
 const router = new Router();
 
@@ -39,6 +40,8 @@ router.post(
 	],
 	UserController.login
 );
+
+router.get('/user', authMiddleware, UserController.userInfo);
 
 /**
  * Get airports list

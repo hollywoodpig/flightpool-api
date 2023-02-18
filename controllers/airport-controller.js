@@ -34,14 +34,8 @@ class AirportController {
 			return res.json({
 				data: airports,
 			});
-		} catch {
-			return res.status(502).json({
-				code: 502,
-				message: 'Error',
-				errors: {
-					query: "Couldn't get airports",
-				},
-			});
+		} catch (e) {
+			next(e);
 		}
 	}
 }

@@ -44,6 +44,15 @@ class UserController {
 			next(e);
 		}
 	}
+
+	/**
+	 * User info
+	 */
+	async userInfo(req, res) {
+		return res.json({
+			user: req.user,
+		});
+	}
 }
 
 module.exports = new UserController();
