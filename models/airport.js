@@ -45,7 +45,7 @@ class airport extends Sequelize.Model {
 		);
 	}
 
-	async findByQuery(query) {
+	async findByQuery(query = '') {
 		const data = await this.findAll({
 			where: {
 				[Op.or]: [
