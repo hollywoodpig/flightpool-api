@@ -1,8 +1,6 @@
 const { Router } = require('express');
-const { body, query } = require('express-validator');
+const { body } = require('express-validator');
 const UserController = require('../controllers/user-controller');
-const AirportController = require('../controllers/airport-controller');
-const FlightController = require('../controllers/flight-controller');
 const authMiddleware = require('../middleware/auth-middleware');
 
 const router = new Router();
@@ -42,35 +40,10 @@ router.post(
 	UserController.login
 );
 
+/**
+ * User info
+ * Method: GET
+ */
 router.get('/user', authMiddleware, UserController.userInfo);
-
-/**
- * Get airports list
- * Method: GET
- * Query params: { query }
- */
-router.get('/airports', AirportController.index);
-
-/**
- * Get flights list
- * Method: GET
- * Query params: { from, to, date1, date2, passengers }
- */
-router.get(
-	'/flights',
-	[
-		query('from')
-			.notEmpty()
-			.withMessage('Empty IATA code')
-			.matches(/^[A-Z]{3}$/)
-			.withMessage('Incorrect IATA code'),
-		query('to')
-			.notEmpty()
-			.withMessage('Empty IATA code')
-			.matches(/^[A-Z]{3}$/)
-			.withMessage('Incorrect IATA code'),
-	],
-	FlightController.index
-);
 
 module.exports = router;

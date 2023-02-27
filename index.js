@@ -16,6 +16,7 @@ app.use(errorMiddleware);
 async function start() {
 	try {
 		await sequelize.authenticate();
+		await sequelize.sync();
 
 		app.listen(process.env.PORT);
 	} catch (e) {
